@@ -1,0 +1,17 @@
+# Compilados
+bin
+obj
+
+# Config local
+.vs
+.github
+
+# Archivos sensibles
+appsettings.json
+appsettings.Development.json
+
+# Versionamiento
+global.json
+
+# configuracion de usuario
+VibraAPI.csproj.user
