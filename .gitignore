@@ -14,4 +14,4 @@ appsettings.Development.json
 global.json
 
 # configuracion de usuario
-VibraAPI.csproj.user
+UrlShortener.Services.API.csproj.user
