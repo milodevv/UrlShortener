@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using UrlShortener.Application.UseCases.Commands;
-using UrlShortener.Application.UseCases.DTOs;
+using UrlShortener.Application.UseCases.Queries;
 
 namespace UrlShortener.Services.API.Controllers
 {
@@ -20,7 +20,7 @@ namespace UrlShortener.Services.API.Controllers
         public async Task<ActionResult> CreateShortUrl([FromBody] CreateShortUrlCommand command)
         {
             var result = await _mediator.Send(command);
-            if (!result)
+            if (result is null)
             {
                 return BadRequest(new ProblemDetails
                 {
@@ -30,7 +30,26 @@ namespace UrlShortener.Services.API.Controllers
                 });
             }
 
-            return Created();
+            return Ok(result);
+        }
+
+        [HttpGet("{shortUrl}")]
+        public async Task<ActionResult> GetLongUrl(string shortUrl)
+        {
+            var splitUrl = shortUrl.Split("%2F");
+            var code = splitUrl[splitUrl.Length - 1];
+            var longUrlResponse = await _mediator.Send(new GetLongtUrlQuery { Code = code });
+            if (longUrlResponse is null)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Title = "Error",
+                    Detail = "Failed to get long URL",
+                    Status= StatusCodes.Status400BadRequest
+                });
+            }
+
+            return Redirect(longUrlResponse.LongUrl);
         }
     }
 }

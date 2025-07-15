@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using UrlShortener.Application.UseCases.Behaviors;
 using UrlShortener.Application.UseCases.Mappings;
 using UrlShortener.Domain.Entities;
 
@@ -19,6 +21,7 @@ namespace UrlShortener.Application.UseCases
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+                cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             });
 
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());

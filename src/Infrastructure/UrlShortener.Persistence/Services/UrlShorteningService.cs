@@ -1,31 +1,34 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using UrlShortener.Application.UseCases.DTOs;
+using Microsoft.Extensions.Options;
 using UrlShortener.Application.UseCases.Interfaces;
+using UrlShortener.Persistence.Configurations;
 
 namespace UrlShortener.Persistence.Services
 {
     public class UrlShorteningService : IUrlShorteningService
     {
         private readonly IApplicationDbContext _dbContext;
+        private readonly ShortLinkSettings _settings;
         private readonly Random _random = new();
 
-        public UrlShorteningService(IApplicationDbContext dbContext)
+        public UrlShorteningService(IApplicationDbContext dbContext, IOptions<ShortLinkSettings> options)
         {
             _dbContext = dbContext;
+            _settings = options.Value;
         }
 
         public async Task<string> GenerateUniqueCode()
         {
-            var codeChars = new char[ShortLinkSettingsDTO.Length];
-            int maxValue = ShortLinkSettingsDTO.Alphabet.Length;
+            var codeChars = new char[_settings.Length];
+            int maxValue = _settings.Alphabet.Length;
 
-            while (true)
+            const int maxRetries = 1000;
+            for (int attempt = 0; attempt < maxRetries; attempt++)
             {
-                for (var i = 0; i < ShortLinkSettingsDTO.Length; i++)
+                for (var i = 0; i < _settings.Length; i++)
                 {
                     var randomIndex = _random.Next(maxValue);
-
-                    codeChars[i] = ShortLinkSettingsDTO.Alphabet[randomIndex];
+                    codeChars[i] = _settings.Alphabet[randomIndex];
                 }
 
                 var code = new string(codeChars);
@@ -35,6 +38,8 @@ namespace UrlShortener.Persistence.Services
                     return code;
                 }
             }
+
+            throw new Exception("A unique code could not be generated after multiple attempts.");
         }
     }
 }

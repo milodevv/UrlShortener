@@ -19,8 +19,4 @@
     <ProjectReference Include="..\..\Infrastructure\UrlShortener.Persistence\UrlShortener.Persistence.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Mappings\" />
-  </ItemGroup>
-
 </Project>

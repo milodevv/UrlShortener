@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using UrlShortener.Application.UseCases.Commands;
 using UrlShortener.Application.UseCases.DTOs;
+using UrlShortener.Application.UseCases.Queries;
 using UrlShortener.Domain.Entities;
 
 namespace UrlShortener.Application.UseCases.Mappings
@@ -11,6 +12,7 @@ namespace UrlShortener.Application.UseCases.Mappings
         {
             CreateMap<CreateShortUrlCommand, ShortenedUrl>().ReverseMap();
             CreateMap<ShortenedUrl, CreateShortUrlResponseDTO>().ReverseMap();
+            CreateMap<LongUrlResponseDTO, ShortenedUrl>().ReverseMap();
         }
     }
 }
