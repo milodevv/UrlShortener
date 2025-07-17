@@ -49,7 +49,7 @@ namespace UrlShortener.Services.API.Controllers
                 });
             }
 
-            return Ok(longUrlResponse.LongUrl);
+            return Redirect(longUrlResponse.LongUrl);
         }
     }
 }
