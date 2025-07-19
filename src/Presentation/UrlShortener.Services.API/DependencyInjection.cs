@@ -11,6 +11,7 @@ namespace UrlShortener.Services.API
             services.AddOptions<ShortLinkSettings>()
                 .Bind(configuration.GetSection("ShortLinkSettings"))
                 .Validate(s => s.Length > 0 && !string.IsNullOrWhiteSpace(s.Alphabet), "ShortLinkSettings inválido");
+            services.AddMemoryCache();
             return services;
         }
     }
