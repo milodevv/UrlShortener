@@ -3,7 +3,7 @@ using UrlShortener.Application.UseCases.Queries;
 
 namespace UrlShortener.Application.UseCases.Validators
 {
-    public class GetLongUrlQueryValidator : AbstractValidator<GetLongtUrlQuery>
+    public class GetLongUrlQueryValidator : AbstractValidator<GetLongUrlQuery>
     {
         public GetLongUrlQueryValidator()
         {

@@ -8,7 +8,7 @@ using UrlShortener.Domain.Entities;
 
 namespace UrlShortener.Application.UseCases.Handlers
 {
-    public class GetLongUrlHandler : IRequestHandler<GetLongtUrlQuery, LongUrlResponseDTO>
+    public class GetLongUrlHandler : IRequestHandler<GetLongUrlQuery, LongUrlResponseDTO>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ namespace UrlShortener.Application.UseCases.Handlers
             _mapper = mapper;
         }
 
-        public async Task<LongUrlResponseDTO> Handle(GetLongtUrlQuery request, CancellationToken cancellationToken)
+        public async Task<LongUrlResponseDTO> Handle(GetLongUrlQuery request, CancellationToken cancellationToken)
         {
             var shortenedUrl = await _dbContext.ShortenedUrls.FirstOrDefaultAsync(x => x.Code == request.Code);
             var longUrlResponseDto = _mapper.Map<LongUrlResponseDTO>(shortenedUrl);
