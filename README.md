@@ -1,74 +1,89 @@
 # UrlShortener
 
-Soluci髇 para acortar URLs, basada en .NET 8, arquitectura limpia y buenas pr醕ticas de desarrollo. Permite crear URLs cortas a partir de URLs largas, gestionando la persistencia y exposici髇 mediante una API REST.
+Soluci贸n para acortar URLs, basada en .NET 8, arquitectura limpia y buenas pr谩cticas de desarrollo. Permite crear URLs cortas a partir de URLs largas, gestionando la persistencia y exposici贸n mediante una API REST.
 
 ---
 
-## Arquitectura y Dise駉
+## Arquitectura y Dise锟給
 
-La soluci髇 sigue los principios de **Clean Architecture**, separando responsabilidades en capas: Presentaci髇 (API), Aplicaci髇 (casos de uso), Infraestructura (persistencia y servicios), y Dominio (entidades y l骻ica de negocio).
+La soluci贸n sigue los principios de **Clean Architecture**, separando responsabilidades en capas: Presentaci贸n (API), Aplicaci贸n (casos de uso), Infraestructura (persistencia y servicios), y Dominio (entidades y l贸gica de negocio).
 
-**Patrones de dise駉 implementados:**
+**Patrones de dise锟給 implementados:**
+
+**Patrones de dise帽o implementados:**
 - **CQRS** (Command Query Responsibility Segregation) usando MediatR.
-- **Dependency Injection** para la gesti髇 de dependencias.
-- **Repository/Unit of Work** a trav閟 de DbContext de Entity Framework.
-- **DTOs y AutoMapper** para la transformaci髇 de datos entre capas.
+- **Dependency Injection** para la gesti贸n de dependencias.
+- **Repository/Unit of Work** a trav茅s de DbContext de Entity Framework Core.
+- **DTOs y AutoMapper** para la transformaci贸n de datos entre capas.
 
 ---
 
 ## Proyectos
 
-### 1. UrlShortener.Services.API (Presentaci髇)
-- **Tipo:** ASP.NET Core Web API
-- **Responsabilidad:** Expone endpoints REST para acortar URLs.
-- **Tecnolog韆s:** ASP.NET Core, Swagger (Swashbuckle), MediatR.
-- **Paquetes principales:**
-  - `Swashbuckle.AspNetCore` (documentaci髇 Swagger)
-  - `Microsoft.EntityFrameworkCore.Design`
-- **Caracter韘ticas:** 
-  - Controlador principal: `UrlController`
-  - Integraci髇 con Swagger para pruebas y documentaci髇.
-  - Inyecci髇 de servicios de aplicaci髇 e infraestructura.
+### 1. UrlShortener.Services.API (Presentaci锟絥)
 
-### 2. UrlShortener.Application.UseCases (Aplicaci髇)
-- **Tipo:** Biblioteca de clases
-- **Responsabilidad:** Contiene la l骻ica de negocio y casos de uso (handlers, comandos, validaciones).
-- **Tecnolog韆s:** MediatR, AutoMapper, FluentValidation.
+- **Tipo:** ASP.NET Core Web API
+- **Responsabilidad:** Expone endpoints REST para acortar URLs y recuperar URLs largas.
+- **Tecnolog铆as:** ASP.NET Core, Swagger (Swashbuckle), MediatR.
 - **Paquetes principales:**
-  - `MediatR` (implementaci髇 de CQRS)
+  - `Swashbuckle.AspNetCore` (documentaci贸n Swagger)
+  - `Microsoft.EntityFrameworkCore.Design`
+- **Caracter铆sticas:**
+  - Controlador principal: `UrlController` con endpoints:
+    - `POST /api/url/shorten` para acortar URLs
+    - `GET /api/url/{shortUrl}` para recuperar la URL original
+  - Integraci贸n con Swagger para pruebas y documentaci贸n.
+  - Inyecci贸n de servicios de aplicaci贸n e infraestructura.
+  - Configuraci贸n de CORS abierta para desarrollo.
+
+### 2. UrlShortener.Application.UseCases (Aplicaci锟絥)
+
+- **Tipo:** Biblioteca de clases
+- **Responsabilidad:** Contiene la l贸gica de negocio y casos de uso (handlers, comandos, validaciones).
+- **Tecnolog铆as:** MediatR, AutoMapper, FluentValidation.
+- **Paquetes principales:**
+  - `MediatR` (implementaci贸n de CQRS)
   - `AutoMapper` (mapeo de objetos)
-  - `FluentValidation` (validaciones)
-- **Caracter韘ticas:**
+  - `FluentValidation` y `FluentValidation.DependencyInjectionExtensions` (validaciones)
+  - `Microsoft.AspNetCore.Diagnostics`, `Microsoft.AspNetCore.Http.Abstractions` (soporte para excepciones y HTTP)
+- **Caracter铆sticas:**
   - Handlers para comandos y queries.
-  - Interfaces para abstracci髇 de servicios y persistencia.
+  - Interfaces para abstracci贸n de servicios y persistencia.
+  - DTOs para respuestas y configuraci贸n.
 
 ### 3. UrlShortener.Persistence (Infraestructura)
+
 - **Tipo:** Biblioteca de clases
 - **Responsabilidad:** Implementa la persistencia de datos y servicios de infraestructura.
-- **Tecnolog韆s:** Entity Framework Core, MySQL.
+- **Tecnolog铆as:** Entity Framework Core 9, MySQL.
 - **Paquetes principales:**
   - `Microsoft.EntityFrameworkCore`
   - `Pomelo.EntityFrameworkCore.MySql` (proveedor MySQL)
-- **Caracter韘ticas:**
+  - `Microsoft.AspNetCore.Identity.EntityFrameworkCore`
+  - `Microsoft.Extensions.Configuration`, `Microsoft.Extensions.DependencyInjection`
+- **Caracter铆sticas:**
   - `ApplicationDbContext` como DbContext principal.
-  - Servicios como `UrlShorteningService` para generaci髇 de c骴igos 鷑icos.
-  - Configuraci髇 de inyecci髇 de dependencias.
+  - Servicio `UrlShorteningService` para generaci贸n de c贸digos 煤nicos, configurable mediante `ShortLinkSettings` (alfabeto y longitud).
+  - Configuraci贸n de entidades con restricciones y claves 煤nicas.
+  - Migraciones incluidas en la carpeta `Migrations`.
+  - Configuraci贸n de inyecci贸n de dependencias.
 
 ### 4. UrlShortener.Domain (Dominio)
+
 - **Tipo:** Biblioteca de clases
-- **Responsabilidad:** Define las entidades y l骻ica de negocio central.
-- **Tecnolog韆s:** .NET Standard
-- **Caracter韘ticas:**
-  - Entidades como `ShortenedUrl`.
-  - Base para la l骻ica de negocio y reglas de dominio.
+- **Responsabilidad:** Define las entidades y l贸gica de negocio central.
+- **Tecnolog铆as:** .NET 8
+- **Caracter铆sticas:**
+  - Entidad principal: `ShortenedUrl` (con propiedades `LongUrl`, `ShortUrl`, `Code` y auditor铆a).
+  - Clases base para auditor铆a y reglas de dominio.
 
 ---
 
-## Tecnolog韆s Utilizadas
+## Tecnolog锟絘s Utilizadas
 
 - **.NET 8**
 - **ASP.NET Core**
-- **Entity Framework Core** (con MySQL)
+- **Entity Framework Core 9** (con MySQL)
 - **MediatR**
 - **AutoMapper**
 - **FluentValidation**
@@ -81,25 +96,34 @@ La soluci髇 sigue los principios de **Clean Architecture**, separando responsabi
 - `MediatR`
 - `AutoMapper`
 - `FluentValidation`
+- `FluentValidation.DependencyInjectionExtensions`
 - `Microsoft.EntityFrameworkCore`
 - `Pomelo.EntityFrameworkCore.MySql`
 - `Swashbuckle.AspNetCore`
+- `Microsoft.AspNetCore.Identity.EntityFrameworkCore`
+- `Microsoft.Extensions.Configuration`
+- `Microsoft.Extensions.DependencyInjection`
 
 ---
 
 ## Resumen de la Arquitectura
 
-- **Presentaci髇:** API REST con ASP.NET Core.
-- **Aplicaci髇:** Casos de uso y l骻ica de negocio desacoplada.
-- **Infraestructura:** Persistencia y servicios externos.
-- **Dominio:** Entidades y l骻ica de negocio pura.
+- **Presentaci贸n:** API REST con ASP.NET Core y Swagger.
+- **Aplicaci贸n:** Casos de uso y l贸gica de negocio desacoplada (CQRS, validaciones, mapeos).
+- **Infraestructura:** Persistencia con Entity Framework Core y servicios externos (MySQL).
+- **Dominio:** Entidades y l贸gica de negocio pura, con auditor铆a.
 
 ---
 
-## Ejecuci髇
+## Ejecuci锟絥
 
-1. Configura la cadena de conexi髇 a MySQL en `appsettings.json`.
-2. Ejecuta migraciones si es necesario.
-3. Levanta la API y prueba los endpoints usando Swagger.
+1. Configura la cadena de conexi贸n a MySQL en `appsettings.json`.
+2. Ejecuta las migraciones con Entity Framework Core para crear la base de datos:
+   - Ejemplo: `dotnet ef database update --project src/Infrastructure/UrlShortener.Persistence/`
+3. Levanta la API (`dotnet run --project src/Presentation/UrlShortener.Services.API/`) y prueba los endpoints usando Swagger (`/swagger`).
+4. Los endpoints principales son:
+   - `POST /api/url/shorten` (acortar URL)
+   - `GET /api/url/{shortUrl}` (recuperar URL original)
+5. La configuraci贸n de CORS permite pruebas desde cualquier origen en desarrollo.
 
 ---
