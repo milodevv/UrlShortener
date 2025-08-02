@@ -12,9 +12,9 @@ namespace UrlShortener.Persistence.Configurations
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Id).UseMySqlIdentityColumn().IsRequired();
-            builder.Property(x => x.Created).IsRequired().HasColumnType("timestamp").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            builder.Property(x => x.Created).IsRequired().HasColumnType("DATETIME").HasDefaultValueSql("GETDATE()");
             builder.Property(x => x.CreatedBy).IsRequired(false).HasMaxLength(25);
-            builder.Property(x => x.LastModified).IsRequired(false);
+            builder.Property(x => x.LastModified).IsRequired(false).HasColumnType("DATETIME");
             builder.Property(x => x.LastModifiedBy).IsRequired(false).HasMaxLength(25);
             builder.Property(x => x.LongUrl).IsRequired().HasMaxLength(2048);
             builder.Property(x => x.ShortUrl).IsRequired().HasMaxLength(2048);
