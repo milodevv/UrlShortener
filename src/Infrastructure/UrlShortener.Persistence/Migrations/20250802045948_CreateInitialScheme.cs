@@ -59,9 +59,9 @@ namespace UrlShortener.Persistence.Migrations
                     LongUrl = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
                     ShortUrl = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
                     Code = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: false),
-                    Created = table.Column<byte[]>(type: "timestamp", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    Created = table.Column<DateTime>(type: "DATETIME", nullable: false, defaultValueSql: "GETDATE()"),
                     CreatedBy = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
-                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "DATETIME", nullable: true),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true)
                 },
                 constraints: table =>
