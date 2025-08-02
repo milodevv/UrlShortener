@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using UrlShortener.Application.UseCases.Commands;
+using UrlShortener.Application.UseCases.DTOs;
 using UrlShortener.Application.UseCases.Queries;
 
 namespace UrlShortener.Services.API.Controllers
@@ -36,16 +37,13 @@ namespace UrlShortener.Services.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{shortUrl}")]
-        public async Task<ActionResult> GetLongUrl(string shortUrl)
+        [HttpGet("{code}")]
+        public async Task<ActionResult<LongUrlResponseDTO>> GetLongUrl(string code)
         {
-            string cacheKey = $"shortUrl_{shortUrl}";
+            string cacheKey = $"shortUrl_{code}";
 
-            if (!_memoryCache.TryGetValue(cacheKey, out string? longUrl))
+            if (!_memoryCache.TryGetValue(cacheKey, out LongUrlResponseDTO? longUrl))
             {
-                var splitUrl = shortUrl.Split("%2F");
-                var code = splitUrl[^1];
-
                 var longUrlResponse = await _mediator.Send(new GetLongUrlQuery { Code = code });
                 if (longUrlResponse is null)
                 {
@@ -57,7 +55,7 @@ namespace UrlShortener.Services.API.Controllers
                     });
                 }
 
-                longUrl = longUrlResponse.LongUrl;
+                longUrl = longUrlResponse;
 
                 var options = new MemoryCacheEntryOptions()
                     .SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
@@ -65,7 +63,32 @@ namespace UrlShortener.Services.API.Controllers
                 _memoryCache.Set(cacheKey, longUrl, options);
             }
 
-            return Ok(longUrl!);
+            return Ok(longUrl);
+        }
+
+        [HttpGet("{code}")]
+        [Route("{code}")]
+        public async Task<ActionResult> RedirectUrl(string code)
+        {
+            string cacheKey = $"shortUrl_{code}";
+            if (!_memoryCache.TryGetValue(cacheKey, out LongUrlResponseDTO? longUrl))
+            {
+                var longUrlResponse = await _mediator.Send(new GetLongUrlQuery { Code = code });
+                if (longUrlResponse is null)
+                {
+                    return NotFound(new ProblemDetails
+                    {
+                        Title = "Not Found",
+                        Detail = "The requested short URL does not exist.",
+                        Status = StatusCodes.Status404NotFound
+                    });
+                }
+                longUrl = longUrlResponse;
+                var options = new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+                _memoryCache.Set(cacheKey, longUrl, options);
+            }
+            return Redirect(longUrl.LongUrl);
         }
     }
 }
