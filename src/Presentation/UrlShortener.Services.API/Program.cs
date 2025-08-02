@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using UrlShortener.Application.UseCases;
 using UrlShortener.Persistence;
 using UrlShortener.Services.API;
+using UrlShortener.Services.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,5 +68,7 @@ app.UseExceptionHandler(appBuilder =>
         }
     });
 });
+
+app.UseHandlingRequests();
 
 app.Run();
