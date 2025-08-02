@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using UrlShortener.Application.UseCases.DTOs;
 using UrlShortener.Application.UseCases.Interfaces;
 using UrlShortener.Application.UseCases.Queries;
-using UrlShortener.Domain.Entities;
 
 namespace UrlShortener.Application.UseCases.Handlers
 {
@@ -21,7 +20,7 @@ namespace UrlShortener.Application.UseCases.Handlers
 
         public async Task<LongUrlResponseDTO> Handle(GetLongUrlQuery request, CancellationToken cancellationToken)
         {
-            var shortenedUrl = await _dbContext.ShortenedUrls.FirstOrDefaultAsync(x => x.Code == request.Code);
+            var shortenedUrl = await _dbContext.ShortenedUrls.AsNoTracking().FirstOrDefaultAsync(x => x.Code == request.Code);
             var longUrlResponseDto = _mapper.Map<LongUrlResponseDTO>(shortenedUrl);
             return longUrlResponseDto;
         }
