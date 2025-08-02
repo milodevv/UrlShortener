@@ -66,8 +66,8 @@ namespace UrlShortener.Services.API.Controllers
             return Ok(longUrl);
         }
 
-        [HttpGet("{code}")]
-        [Route("{code}")]
+        [HttpGet]
+        [Route("/{code}")]
         public async Task<ActionResult> RedirectUrl(string code)
         {
             string cacheKey = $"shortUrl_{code}";
