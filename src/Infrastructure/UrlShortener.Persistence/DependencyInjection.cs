@@ -16,8 +16,7 @@ namespace UrlShortener.Persistence
             services.AddScoped<AuditableEntitySaveChangesInterceptor>();
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseMySql(configuration.GetConnectionString("MySqlConnection"),
-                    ServerVersion.AutoDetect(configuration.GetConnectionString("MySqlConnection")),
+                options.UseSqlServer(configuration.GetConnectionString("SqlServerConnection"),
                     builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName))
                 .LogTo(Console.WriteLine, LogLevel.Information)
                 .EnableSensitiveDataLogging()
