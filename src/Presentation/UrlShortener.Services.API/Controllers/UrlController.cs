@@ -65,7 +65,7 @@ namespace UrlShortener.Services.API.Controllers
                 _memoryCache.Set(cacheKey, longUrl, options);
             }
 
-            return Redirect(longUrl!);
+            return Ok(longUrl!);
         }
     }
 }
