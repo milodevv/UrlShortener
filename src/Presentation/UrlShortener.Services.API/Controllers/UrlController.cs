@@ -84,11 +84,10 @@ namespace UrlShortener.Services.API.Controllers
                     });
                 }
                 longUrl = longUrlResponse;
-                var options = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+                var options = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
                 _memoryCache.Set(cacheKey, longUrl, options);
             }
-            return Redirect(longUrl.LongUrl);
+            return Redirect(longUrl!.LongUrl);
         }
     }
 }
