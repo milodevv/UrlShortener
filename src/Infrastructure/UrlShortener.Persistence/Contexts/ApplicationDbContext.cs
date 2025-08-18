@@ -26,6 +26,7 @@ namespace UrlShortener.Persistence.Contexts
             builder.Entity<CreateShortUrlResponseDTO>().HasNoKey();
             builder.Entity<CreateShortUrlResponseDTO>().ToView(null);
             base.OnModelCreating(builder);
+            
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
