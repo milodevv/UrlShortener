@@ -15,3 +15,8 @@ global.json
 
 # configuracion de usuario
 UrlShortener.Services.API.csproj.user
+UrlShortener.Client.csproj.user
+*.user
+*.launch.user
+
+*/wwwroot/css/bootstrap/

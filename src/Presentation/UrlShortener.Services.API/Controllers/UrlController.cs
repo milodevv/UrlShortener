@@ -40,7 +40,7 @@ namespace UrlShortener.Services.API.Controllers
         [HttpGet("{code}")]
         public async Task<ActionResult<LongUrlResponseDTO>> GetLongUrl(string code)
         {
-            string cacheKey = $"shortUrl_{code}";
+            string cacheKey = $"getLongUrl_{code}";
 
             if (!_memoryCache.TryGetValue(cacheKey, out LongUrlResponseDTO? longUrl))
             {
@@ -70,7 +70,7 @@ namespace UrlShortener.Services.API.Controllers
         [Route("/{code}")]
         public async Task<ActionResult> RedirectUrl(string code)
         {
-            string cacheKey = $"shortUrl_{code}";
+            string cacheKey = $"redirectUrl_{code}";
             if (!_memoryCache.TryGetValue(cacheKey, out LongUrlResponseDTO? longUrl))
             {
                 var longUrlResponse = await _mediator.Send(new GetLongUrlQuery { Code = code });
