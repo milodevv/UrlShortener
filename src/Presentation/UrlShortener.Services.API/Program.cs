@@ -1,10 +1,27 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using Serilog.Sinks.MSSqlServer;
+using System.Text;
 using UrlShortener.Application.UseCases;
 using UrlShortener.Persistence;
 using UrlShortener.Services.API;
 using UrlShortener.Services.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure logging
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .ReadFrom.Configuration(builder.Configuration)
+    .WriteTo.MSSqlServer(
+        connectionString: builder.Configuration.GetConnectionString("SqlServerConnection"),
+        sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs", AutoCreateSqlTable = true }
+    )
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 
@@ -23,6 +40,28 @@ builder.Services.AddCors(config =>
             .AllowAnyMethod()
             .AllowAnyHeader();
     });
+});
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+    };
+}).AddGoogle(options =>
+{
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
 });
 
 var app = builder.Build();

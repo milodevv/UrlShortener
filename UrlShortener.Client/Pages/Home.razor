@@ -1,0 +1,110 @@
+﻿@page "/"
+@using System.Text
+@using Newtonsoft.Json
+@using UrlShortener.Client.DTOs
+@inject IJSRuntime JS
+
+<PageTitle>Shortener URL</PageTitle>
+
+<div class="page-container text-center">
+    <h3 class="text-white mb-5">
+        Create clean, professional short links that are perfect for sharing across social media, emails, and marketing campaigns.
+    </h3>
+
+    <div class="url-box mx-auto mb-5">
+        <input class="form-control mb-3 input-url" @bind-value="longUrl" type="text" placeholder="Paste your long URL here..." />
+        <button class="btn btn-primary btn-shorten w-100" @onclick="ShortenUrl">
+            <Icon Name="IconName.Link45Deg" Size="IconSize.x4" Color="IconColor.White" />
+            🔗 Shorten URL
+        </button>
+    </div>
+
+
+    @if (!string.IsNullOrEmpty(shortUrl))
+    {
+        <div class="d-flex justify-content-center">
+            <div class="shorturl-box d-flex align-items-center gap-5">
+                <h5 class="text-white align-text-center">@shortUrl</h5>
+                <Button Type="ButtonType.Button"
+                        Color="ButtonColor.Primary"
+                        Outline="false"
+                        Size="ButtonSize.Small"
+                        @onclick="CopyToClipboard">
+                    🔗
+                </Button>
+            </div>
+        </div>
+    }
+
+    <div class="features-container d-flex justify-content-center gap-5 pb-2">
+        <div class="feature-box text-center">
+            <Icon Name="IconName.LightningChargeFill" Size="IconSize.x3" Color="IconColor.White" />
+            <h5 class="text-white mt-3">Lightning Fast</h5>
+            <p class="text-secondary small">Generate short links instantly with our optimized infrastructure</p>
+        </div>
+
+        <div class="feature-box text-center">
+            <Icon Name="IconName.GraphUp" Size="IconSize.x3" Color="IconColor.White" />
+            <h5 class="text-white mt-3">Analytics</h5>
+            <p class="text-secondary small">Track clicks, locations, and performance of your short links</p>
+        </div>
+
+        <div class="feature-box text-center">
+            <Icon Name="IconName.ShieldShaded" Size="IconSize.x3" Color="IconColor.White" />
+            <h5 class="text-white mt-3">Secure</h5>
+            <p class="text-secondary small">Enterprise-grade security with SSL encryption and spam protection</p>
+        </div>
+    </div>
+</div>
+
+@if (copied)
+{
+    <Alert Color="AlertColor.Success"> <Icon Name="IconName.CheckCircleFill" class="me-2"></Icon>URL copied to clipboard </Alert>
+}
+
+@code {
+    [Inject] HttpClient httpClient { get; set; }
+    private string Url = $"{Constants.API_BASE_URL}api/url/shorten";
+    private string longUrl = string.Empty;
+    private string shortUrl = string.Empty;
+    private bool copied = false;
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    private async Task ShortenUrl()
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(longUrl))
+                return;
+
+            using StringContent content = new(JsonConvert.SerializeObject(new { LongUrl = longUrl }), Encoding.UTF8, "application/json");
+            var response = await httpClient.PostAsync(Url, content);
+            response.EnsureSuccessStatusCode();
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<ShortUrlResponseDto>(responseContent);
+            shortUrl = result?.ShortUrl ?? string.Empty;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    private async Task CopyToClipboard()
+    {
+        copied = true;
+        await JS.InvokeVoidAsync("copyContent", shortUrl);
+        Clean();
+    }
+
+    private void Clean()
+    {
+        longUrl = string.Empty;
+        copied = false;
+        StateHasChanged();
+    }
+}

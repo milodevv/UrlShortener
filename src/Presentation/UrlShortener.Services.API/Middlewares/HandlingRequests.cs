@@ -3,17 +3,19 @@
     public class HandlingRequests
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<HandlingRequests> _logger;
 
-        public HandlingRequests(RequestDelegate next)
+        public HandlingRequests(RequestDelegate next, ILogger<HandlingRequests> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
-            Console.WriteLine($"NUEVA PETICION HACIA LA RUTA: {context.Request.Path}, CON CUERPO: {context.Request.Body.ToString()}");
+            _logger.LogInformation($"Nueva peticion hacia el metodo: {context.Request.Method}, con cuerpo: {context.Request.Body.ToString()}");
             await _next(context);
-            Console.WriteLine($"RESPUESTA DE LA PETICION HACIA LA RUTA: {context.Request.Path}, CON CODIGO DE ESTADO: {context.Response.StatusCode}");
+            _logger.LogInformation($"Respuesta de la peticion hacia la ruta: {context.Request.Path}, con codigo de estado: {context.Response.StatusCode}");
         }
     }
 

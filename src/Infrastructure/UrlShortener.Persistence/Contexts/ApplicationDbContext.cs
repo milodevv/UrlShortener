@@ -11,12 +11,7 @@ namespace UrlShortener.Persistence.Contexts
 {
     public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IApplicationDbContext
     {
-        private readonly AuditableEntitySaveChangesInterceptor _auditableEntitySaveChangesInterceptor;
-
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor) : base(options)
-        {
-            _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
-        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<ShortenedUrl> ShortenedUrls { get; set; }
 
@@ -31,7 +26,6 @@ namespace UrlShortener.Persistence.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.AddInterceptors(_auditableEntitySaveChangesInterceptor);
             optionsBuilder.EnableSensitiveDataLogging();
         }
 
