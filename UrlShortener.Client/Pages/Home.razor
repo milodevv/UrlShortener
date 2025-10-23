@@ -87,6 +87,8 @@
             var responseContent = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<ShortUrlResponseDto>(responseContent);
             shortUrl = result?.ShortUrl ?? string.Empty;
+
+            if (shortUrl is not null) longUrl = string.Empty;
         }
         catch (Exception)
         {
