@@ -60,8 +60,10 @@
 }
 
 @code {
-    [Inject] HttpClient httpClient { get; set; }
-    private string Url = $"{Constants.API_BASE_URL}api/url/shorten";
+    [Inject] HttpClient? httpClient { get; set; }
+    [Inject] IConfiguration? configuration { get; set; }
+
+    private string Url = string.Empty;
     private string longUrl = string.Empty;
     private string shortUrl = string.Empty;
     private bool copied = false;
@@ -78,8 +80,11 @@
             if (string.IsNullOrEmpty(longUrl))
                 return;
 
+            Url = $"{GetUrlBaseApi()}{Constants.SHORTEN_URL}";
+            Console.WriteLine(Url);
+
             using StringContent content = new(JsonConvert.SerializeObject(new { LongUrl = longUrl }), Encoding.UTF8, "application/json");
-            var response = await httpClient.PostAsync(Url, content);
+            var response = await httpClient!.PostAsync(Url, content);
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<ShortUrlResponseDto>(responseContent);
@@ -99,6 +104,8 @@
         await JS.InvokeVoidAsync("copyContent", shortUrl);
         Clean();
     }
+
+    private string GetUrlBaseApi() => configuration?["UrlBases:API"]!;
 
     private void Clean()
     {
