@@ -13,9 +13,9 @@
 
     <div class="url-box mx-auto mb-4">
         <input class="form-control mb-3 input-url" @bind-value="longUrl" type="text" placeholder="Paste your long URL here..." />
-        <button class="btn btn-primary btn-shorten w-100" @onclick="ShortenUrl">
+        <button class="btn-shorten w-100" @onclick="ShortenUrl">
             <Icon Name="IconName.Link45Deg" Size="IconSize.x4" Color="IconColor.White" />
-            🔗 Shorten URL
+            Shorten URL
         </button>
     </div>
 
@@ -25,10 +25,13 @@
         <div class="short-url-box d-flex justify-content-center">
             <div class="shorturl-box d-flex align-items-center">
                 <h5 class="short-url-r text-white align-text-center">@shortUrl</h5>
-                <button Class="btn-short-url"
+                <button Class="btn-short-url" title="Copy to Clipboard"
                         @onclick="CopyToClipboard">
-                    🔗
+                    <Icon Name="IconName.Link45Deg" Size="IconSize.x6" Color="IconColor.White" />
                 </button>
+                <a Class="btn-short-url" title="Go to site" target="_blank" href="@longUrl">
+                    <Icon Name="IconName.BoxArrowRight" Size="IconSize.x6" Color="IconColor.White" />
+                </a>
             </div>
         </div>
     }
@@ -62,6 +65,7 @@
 @code {
     [Inject] HttpClient? httpClient { get; set; }
     [Inject] IConfiguration? configuration { get; set; }
+    [Inject] NavigationManager? navigationManager { set; get; }
 
     private string Url = string.Empty;
     private string longUrl = string.Empty;
@@ -81,7 +85,6 @@
                 return;
 
             Url = $"{GetUrlBaseApi()}{Constants.SHORTEN_URL}";
-            Console.WriteLine(Url);
 
             using StringContent content = new(JsonConvert.SerializeObject(new { LongUrl = longUrl }), Encoding.UTF8, "application/json");
             var response = await httpClient!.PostAsync(Url, content);
@@ -89,6 +92,27 @@
             var responseContent = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<ShortUrlResponseDto>(responseContent);
             shortUrl = result?.ShortUrl ?? string.Empty;
+
+            await GoToSite();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    private async Task GoToSite()
+    {
+        try
+        {
+            var codeUrl = shortUrl.Split('/').Last();
+            Url = $"{GetUrlBaseApi()}{Constants.BASE_SCHEME}{codeUrl}";
+
+            var response = await httpClient!.GetAsync(Url);
+            response.EnsureSuccessStatusCode();
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<LongUrlResponseDto>(responseContent);
+            longUrl = result?.LongUrl ?? string.Empty;
 
             if (shortUrl is not null) longUrl = string.Empty;
         }
