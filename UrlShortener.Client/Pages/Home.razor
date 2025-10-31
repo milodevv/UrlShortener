@@ -11,7 +11,7 @@
         Create clean, professional short links that are perfect for sharing across social media, emails, and marketing campaigns.
     </h3>
 
-    <div class="url-box mx-auto mb-5">
+    <div class="url-box mx-auto mb-4">
         <input class="form-control mb-3 input-url" @bind-value="longUrl" type="text" placeholder="Paste your long URL here..." />
         <button class="btn btn-primary btn-shorten w-100" @onclick="ShortenUrl">
             <Icon Name="IconName.Link45Deg" Size="IconSize.x4" Color="IconColor.White" />
@@ -22,16 +22,13 @@
 
     @if (!string.IsNullOrEmpty(shortUrl))
     {
-        <div class="d-flex justify-content-center">
-            <div class="shorturl-box d-flex align-items-center gap-5">
-                <h5 class="text-white align-text-center">@shortUrl</h5>
-                <Button Type="ButtonType.Button"
-                        Color="ButtonColor.Primary"
-                        Outline="false"
-                        Size="ButtonSize.Small"
+        <div class="short-url-box d-flex justify-content-center">
+            <div class="shorturl-box d-flex align-items-center">
+                <h5 class="short-url-r text-white align-text-center">@shortUrl</h5>
+                <button Class="btn-short-url"
                         @onclick="CopyToClipboard">
                     🔗
-                </Button>
+                </button>
             </div>
         </div>
     }
