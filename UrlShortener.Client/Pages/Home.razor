@@ -59,7 +59,10 @@
 
 @if (copied)
 {
-    <Alert Color="AlertColor.Success"> <Icon Name="IconName.CheckCircleFill" class="me-2"></Icon>URL copied to clipboard </Alert>
+    <Alert Color="AlertColor.Success" Class="fade show">
+        <Icon Name="IconName.CheckCircleFill" class="me-2"></Icon>
+        URL copied to clipboard
+    </Alert>
 }
 
 @code {
@@ -125,7 +128,11 @@
     private async Task CopyToClipboard()
     {
         copied = true;
+        StateHasChanged();
         await JS.InvokeVoidAsync("copyContent", shortUrl);
+        await Task.Delay(TimeSpan.FromSeconds(2));
+        copied = false;
+        StateHasChanged();
         Clean();
     }
 
