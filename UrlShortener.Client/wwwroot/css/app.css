@@ -141,6 +141,24 @@ code {
     box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
 }
 
+.short-url-box{
+    width: 100%;
+    min-width: 300px;
+    margin: 0 auto 2rem auto;
+    font-size: .5rem;
+    font-weight: 200;
+}
+
+.shorturl-box{
+    display: flex;
+    text-align: center;
+    justify-content: space-evenly;
+}
+
+.short-url-r{
+    margin-block-end: 0;
+}
+
 .input-url {
     background-color: rgba(255, 255, 255, 0.9);
     border: none;
@@ -154,19 +172,43 @@ code {
     background: linear-gradient(90deg, #0061ff, #6100ff);
     border: none;
     border-radius: 8px;
-    padding: 9px 0;
+    padding: 5px 0;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 1rem;
+    color: white;
+    gap: 3px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
     transition: 0.3s;
 }
 
     .btn-shorten:hover {
         background: linear-gradient(90deg, #6100ff, #0061ff);
     }
+
+.btn-short-url {
+    background: linear-gradient(90deg, #0061ff, #6100ff);
+    border: none;
+    border-radius: 8px;
+    padding: 5px 7px;
+    font-weight: 100;
+    font-size: .2rem;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: 0.3s;
+}
+
+.short-url-r {
+    font-size: 1rem;
+    width: 267px;
+    font-weight: 300;
+    text-align: center;
+    margin-block-end: 0;
+}
 
 .features-container {
     flex-wrap: wrap;
@@ -204,12 +246,24 @@ code {
     padding: 10px;
     backdrop-filter: blur(8px);
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    gap: 5px;
 }
-
-
-
 
 .gap-2 {
     gap: 10px;
     width: 75%;
+}
+
+@media (max-width: 480px){
+    .short-url-box .shorturl-box{
+        width: 267px;
+    }
+
+    .short-url-r{
+        font-size: .8rem;
+        width: 267px;
+        font-weight: 300;
+        text-align: center;
+        margin-block-end: 0;
+    }
 }

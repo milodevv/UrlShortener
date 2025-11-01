@@ -2,6 +2,7 @@
 {
     public static class Constants
     {
-        public const string API_BASE_URL = "https://localhost:7045/";
+        public const string BASE_SCHEME = "api/url/";
+        public const string SHORTEN_URL = "api/url/shorten";
     }
 }

@@ -14,4 +14,8 @@
     <PackageReference Include="Syncfusion.Blazor.Cards" Version="31.2.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\sample-data\" />
+  </ItemGroup>
+
 </Project>

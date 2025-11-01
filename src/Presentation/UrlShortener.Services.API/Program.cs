@@ -14,11 +14,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Configure logging
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+    .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
     .ReadFrom.Configuration(builder.Configuration)
     .WriteTo.MSSqlServer(
         connectionString: builder.Configuration.GetConnectionString("SqlServerConnection"),
         sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs", AutoCreateSqlTable = true }
     )
+    .Enrich.FromLogContext()
     .CreateLogger();
 
 builder.Host.UseSerilog();
